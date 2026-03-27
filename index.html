@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berufsjournal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ec;
+    --surface: #fdfbf7;
+    --surface2: #f0ede5;
+    --border: #ddd9cf;
+    --border2: #ccc8bc;
+    --text: #1a1916;
+    --text2: #6b6860;
+    --text3: #9e9c96;
+    --green-bg: #eaf3de;
+    --green-text: #2d5a10;
+    --green-border: #7ab844;
+    --red-bg: #fceaea;
+    --red-text: #7a1f1f;
+    --red-border: #d45a5a;
+    --gray-bg: #f0ede5;
+    --gray-text: #555350;
+    --gray-border: #aaa89e;
+    --accent: #3d5a2e;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Layout */
+  .app { max-width: 680px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-family: 'Lora', serif; font-size: 28px; font-weight: 400; letter-spacing: -0.3px; color: var(--text); }
+  header p { font-size: 14px; color: var(--text2); margin-top: 4px; }
+
+  /* Nav */
+  nav { display: flex; gap: 2px; margin-bottom: 2rem; background: var(--surface2); border-radius: var(--radius); padding: 4px; border: 1px solid var(--border); }
+  nav button { flex: 1; padding: 7px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; border: none; border-radius: 7px; cursor: pointer; background: transparent; color: var(--text2); transition: all 0.15s; }
+  nav button.active { background: var(--surface); color: var(--text); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* Settings banner */
+  .settings-banner { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+  .settings-banner h3 { font-size: 14px; font-weight: 500; margin-bottom: 0.75rem; }
+  .settings-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  .field-group label { font-size: 12px; color: var(--text2); }
+  .field-group input { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); color: var(--text); }
+  .field-group input:focus { outline: none; border-color: var(--border2); }
+  .settings-hint { font-size: 12px; color: var(--text3); margin-top: 8px; }
+  .settings-hint a { color: var(--accent); }
+
+  /* Form */
+  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+  .field { margin-bottom: 1.25rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 6px; letter-spacing: 0.02em; text-transform: uppercase; font-weight: 500; }
+  textarea { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); resize: vertical; min-height: 90px; line-height: 1.6; }
+  textarea:focus { outline: none; border-color: var(--border2); }
+  select { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); appearance: none; cursor: pointer; }
+  select:focus { outline: none; border-color: var(--border2); }
+
+  /* Tone buttons */
+  .tone-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tone-btn {
+    font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 8px 18px;
+    border: 1.5px solid var(--border); border-radius: 999px;
+    background: var(--bg); color: var(--text2); cursor: pointer;
+    transition: all 0.12s;
+  }
+  .tone-btn:hover { border-color: var(--border2); color: var(--text); }
+  .tone-btn.sel-pos { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); font-weight: 500; }
+  .tone-btn.sel-neg { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); font-weight: 500; }
+  .tone-btn.sel-neu { background: var(--gray-bg); color: var(--gray-text); border-color: var(--gray-border); font-weight: 500; }
+
+  /* Buttons */
+  .btn-primary { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 9px 22px; border-radius: 999px; border: none; background: var(--accent); color: #fff; cursor: pointer; transition: opacity 0.15s; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.4; cursor: default; }
+  .btn-secondary { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 8px 18px; border-radius: 999px; border: 1px solid var(--border2); background: transparent; color: var(--text); cursor: pointer; transition: background 0.12s; }
+  .btn-secondary:hover { background: var(--surface2); }
+  .btn-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 1.25rem; }
+
+  /* Sync status */
+  .sync-status { font-size: 12px; color: var(--text3); }
+  .sync-status.ok { color: var(--green-text); }
+  .sync-status.err { color: var(--red-text); }
+  .sync-status.loading { color: var(--text3); font-style: italic; }
+
+  /* Entries */
+  .entries-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .entries-count { font-size: 13px; color: var(--text2); }
+  .entry-list { display: flex; flex-direction: column; gap: 10px; }
+  .entry-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; }
+  .entry-card:hover { border-color: var(--border2); }
+  .entry-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .entry-meta { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+  .entry-date { font-size: 12px; color: var(--text3); }
+  .badge { font-size: 11px; font-weight: 500; padding: 2px 10px; border-radius: 999px; }
+  .badge-pos { background: var(--green-bg); color: var(--green-text); }
+  .badge-neg { background: var(--red-bg); color: var(--red-text); }
+  .badge-neu { background: var(--gray-bg); color: var(--gray-text); }
+  .badge-cat { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+  .entry-text { font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; }
+  .entry-actions { display: flex; gap: 6px; }
+  .icon-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+  .icon-btn:hover { color: var(--text); background: var(--surface2); }
+  .empty-state { text-align: center; padding: 3rem 0; color: var(--text2); font-size: 14px; }
+
+  /* Analysis */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .stat-tile .n { font-family: 'Lora', serif; font-size: 32px; font-weight: 400; line-height: 1; margin-bottom: 4px; }
+  .stat-tile .l { font-size: 12px; color: var(--text2); }
+  .n-pos { color: var(--green-text); }
+  .n-neg { color: var(--red-text); }
+  .n-neu { color: var(--gray-text); }
+  .analysis-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; font-size: 14px; line-height: 1.75; color: var(--text); white-space: pre-wrap; min-height: 80px; }
+  .analysis-box.placeholder { color: var(--text3); font-style: italic; }
+  .cat-bars { margin-bottom: 1.5rem; }
+  .cat-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .cat-bar-label { font-size: 13px; color: var(--text2); width: 160px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cat-bar-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .cat-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s; }
+  .cat-bar-count { font-size: 12px; color: var(--text3); width: 20px; text-align: right; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--text); color: var(--surface); padding: 9px 20px; border-radius: 999px; font-size: 13px; opacity: 0; transition: opacity 0.25s, transform 0.25s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Loading spinner */
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 500px) {
+    .settings-row { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Berufsjournal</h1>
+    <p>Erfasse, was dich im Job bewegt — über Zeit entstehen Muster.</p>
+  </header>
+
+  <nav>
+    <button class="active" onclick="showTab('new')">Neuer Eintrag</button>
+    <button onclick="showTab('entries')">Einträge</button>
+    <button onclick="showTab('analyse')">Analyse</button>
+    <button onclick="showTab('settings')">Einstellungen</button>
+  </nav>
+
+  <!-- NEW ENTRY -->
+  <div id="tab-new">
+    <div class="form-card">
+      <div class="field">
+        <label>Was ist passiert / aufgefallen?</label>
+        <textarea id="inp-text" placeholder="Freitext — so viel oder wenig wie du magst..."></textarea>
+      </div>
+      <div class="field">
+        <label>Stimmung</label>
+        <div class="tone-btns">
+          <button class="tone-btn" id="btn-pos" onclick="selectTone('pos')">Freude / Energie</button>
+          <button class="tone-btn" id="btn-neg" onclick="selectTone('neg')">Ärger / Frust</button>
+          <button class="tone-btn" id="btn-neu" onclick="selectTone('neu')">Neutral / gemischt</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Bereich (optional)</label>
+        <select id="inp-cat">
+          <option value="">— nicht angegeben —</option>
+          <option>Inhalte / Aufgaben</option>
+          <option>Zusammenarbeit / Team</option>
+          <option>Führung / Organisation</option>
+          <option>Wirkung / Sinn</option>
+          <option>Autonomie / Freiheit</option>
+          <option>Entwicklung / Lernen</option>
+          <option>Work-Life-Balance</option>
+          <option>Anerkennung</option>
+          <option>Sonstiges</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="save-btn" onclick="saveEntry()">Speichern</button>
+        <span class="sync-status" id="save-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRIES -->
+  <div id="tab-entries" style="display:none;">
+    <div class="entries-header">
+      <span class="entries-count" id="entries-count"></span>
+      <button class="btn-secondary" onclick="syncFromGist()" id="sync-btn">↓ Synchronisieren</button>
+    </div>
+    <div class="entry-list" id="entry-list"></div>
+  </div>
+
+  <!-- ANALYSE -->
+  <div id="tab-analyse" style="display:none;">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div id="cat-bars"></div>
+    <div class="analysis-box placeholder" id="analysis-box">Noch keine Analyse vorhanden. Klicke auf «Analysieren», um Claude zu befragen.</div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="exportEntries()">Einträge kopieren</button>
+      <span class="sync-status" id="analyse-status"></span>
+    </div>
+    <p style="font-size:13px;color:var(--text2);margin-top:0.75rem;">Füge den kopierten Text in deinen Chat mit Claude ein — dort kannst du eine Analyse anfordern.</p>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="tab-settings" style="display:none;">
+    <div class="settings-banner">
+      <h3>GitHub Gist — Synchronisation</h3>
+      <div class="settings-row">
+        <div class="field-group">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="inp-token" placeholder="ghp_..." oninput="saveSettings()">
+        </div>
+        <div class="field-group">
+          <label>Gist ID (leer lassen für neuen Gist)</label>
+          <input type="text" id="inp-gist" placeholder="Wird automatisch erstellt" oninput="saveSettings()">
+        </div>
+      </div>
+      <p class="settings-hint">Token braucht den Scope <strong>gist</strong>. Erstelle einen unter <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a>.</p>
+    </div>
+
+    <div class="btn-row" style="margin-top:1.25rem;">
+      <button class="btn-primary" onclick="testGist()">Gist testen</button>
+      <span class="sync-status" id="settings-status"></span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let entries = [];
+let settings = { token: '', gistId: '' };
+let selectedTone = null;
+
+// ── Init ───────────────────────────────────────────────────────────────────
+function init() {
+  const s = localStorage.getItem('bj_settings');
+  if (s) settings = { ...settings, ...JSON.parse(s) };
+  const e = localStorage.getItem('bj_entries');
+  if (e) entries = JSON.parse(e);
+
+  document.getElementById('inp-token').value = settings.token || '';
+  document.getElementById('inp-gist').value = settings.gistId || '';
+}
+
+// ── Settings ───────────────────────────────────────────────────────────────
+function saveSettings() {
+  settings.token = document.getElementById('inp-token').value.trim();
+  settings.gistId = document.getElementById('inp-gist').value.trim();
+  localStorage.setItem('bj_settings', JSON.stringify(settings));
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function showTab(t) {
+  ['new','entries','analyse','settings'].forEach(id => {
+    document.getElementById('tab-'+id).style.display = id===t ? 'block' : 'none';
+  });
+  document.querySelectorAll('nav button').forEach((el,i) => {
+    el.classList.toggle('active', ['new','entries','analyse','settings'][i]===t);
+  });
+  if (t==='entries') renderEntries();
+  if (t==='analyse') renderAnalysis();
+}
+
+// ── Tone ───────────────────────────────────────────────────────────────────
+function selectTone(tone) {
+  selectedTone = tone;
+  ['pos','neg','neu'].forEach(t => {
+    const btn = document.getElementById('btn-'+t);
+    btn.className = 'tone-btn' + (t===tone ? ' sel-'+t : '');
+  });
+}
+
+function resetForm() {
+  document.getElementById('inp-text').value = '';
+  document.getElementById('inp-cat').value = '';
+  selectedTone = null;
+  ['pos','neg','neu'].forEach(t => {
+    document.getElementById('btn-'+t).className = 'tone-btn';
+  });
+}
+
+// ── Save entry ─────────────────────────────────────────────────────────────
+async function saveEntry() {
+  const text = document.getElementById('inp-text').value.trim();
+  if (!text) { toast('Bitte einen Text eingeben.'); return; }
+  if (!selectedTone) { toast('Bitte eine Stimmung wählen.'); return; }
+
+  const entry = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    text,
+    tone: selectedTone,
+    cat: document.getElementById('inp-cat').value
+  };
+
+  entries.unshift(entry);
+  saveLocal();
+  resetForm();
+
+  const btn = document.getElementById('save-btn');
+  const status = document.getElementById('save-status');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Speichern…';
+  status.className = 'sync-status loading';
+  status.textContent = 'Wird mit Gist synchronisiert…';
+
+  try {
+    await syncToGist();
+    status.className = 'sync-status ok';
+    status.textContent = '✓ Gespeichert & synchronisiert';
+  } catch(e) {
+    status.className = 'sync-status err';
+    status.textContent = 'Lokal gespeichert (Gist-Sync fehlgeschlagen)';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Speichern';
+  setTimeout(() => { status.textContent = ''; }, 4000);
+}
+
+// ── Local storage ──────────────────────────────────────────────────────────
+function saveLocal() {
+  localStorage.setItem('bj_entries', JSON.stringify(entries));
+}
+
+// ── Gist sync ──────────────────────────────────────────────────────────────
+async function syncToGist() {
+  if (!settings.token) throw new Error('Kein Token');
+  const content = JSON.stringify(entries, null, 2);
+  if (settings.gistId) {
+    const r = await fetch(`https://api.github.com/gists/${settings.gistId}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${settings.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { 'berufsjournal.json': { content } } })
+    });
+    if (!r.ok) throw new Error('Gist update failed');
+  } else {
+    const r = await fetch('https://api.github.com/gists', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${settings.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        description: 'Berufsjournal',
+        public: false,
+        files: { 'berufsjournal.json': { content } }
+      })
+    });
+    if (!r.ok) throw new Error('Gist create failed');
+    const data = await r.json();
+    settings.gistId = data.id;
+    document.getElementById('inp-gist').value = data.id;
+    localStorage.setItem('bj_settings', JSON.stringify(settings));
+  }
+}
+
+async function syncFromGist() {
+  if (!settings.token || !settings.gistId) { toast('Bitte zuerst Token und Gist ID in Einstellungen eingeben.'); return; }
+  const btn = document.getElementById('sync-btn');
+  btn.textContent = 'Lädt…';
+  btn.disabled = true;
+  try {
+    const r = await fetch(`https://api.github.com/gists/${settings.gistId}`, {
+      headers: { 'Authorization': `Bearer ${settings.token}` }
+    });
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    const raw = data.files['berufsjournal.json']?.content;
+    if (!raw) throw new Error();
+    entries = JSON.parse(raw);
+    saveLocal();
+    renderEntries();
+    toast('Synchronisiert.');
+  } catch(e) {
+    toast('Synchronisation fehlgeschlagen.');
+  }
+  btn.textContent = '↓ Synchronisieren';
+  btn.disabled = false;
+}
+
+async function testGist() {
+  const status = document.getElementById('settings-status');
+  status.className = 'sync-status loading';
+  status.textContent = 'Verbinde…';
+  try {
+    await syncToGist();
+    status.className = 'sync-status ok';
+    status.textContent = '✓ Verbindung erfolgreich. Gist ID gespeichert.';
+  } catch(e) {
+    status.className = 'sync-status err';
+    status.textContent = 'Fehler: ' + e.message;
+  }
+}
+
+// ── Render entries ─────────────────────────────────────────────────────────
+function renderEntries() {
+  const list = document.getElementById('entry-list');
+  const count = document.getElementById('entries-count');
+  count.textContent = entries.length === 1 ? '1 Eintrag' : `${entries.length} Einträge`;
+
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty-state">Noch keine Einträge vorhanden.</div>';
+    return;
+  }
+
+  const toneLabel = { pos: 'Freude', neg: 'Ärger', neu: 'Neutral' };
+  const badgeClass = { pos: 'badge-pos', neg: 'badge-neg', neu: 'badge-neu' };
+
+  list.innerHTML = entries.map(e => {
+    const d = new Date(e.date).toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const catBadge = e.cat ? `<span class="badge badge-cat">${e.cat}</span>` : '';
+    return `<div class="entry-card">
+      <div class="entry-top">
+        <div class="entry-meta">
+          <span class="entry-date">${d}</span>
+          <span class="badge ${badgeClass[e.tone]}">${toneLabel[e.tone]}</span>
+          ${catBadge}
+        </div>
+        <div class="entry-actions">
+          <button class="icon-btn" onclick="deleteEntry(${e.id})" title="Löschen">✕</button>
+        </div>
+      </div>
+      <div class="entry-text">${escHtml(e.text)}</div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  saveLocal();
+  renderEntries();
+  try { await syncToGist(); } catch(e) {}
+}
+
+// ── Render analysis ────────────────────────────────────────────────────────
+function renderAnalysis() {
+  const pos = entries.filter(e => e.tone==='pos').length;
+  const neg = entries.filter(e => e.tone==='neg').length;
+  const neu = entries.filter(e => e.tone==='neu').length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-tile"><div class="n n-pos">${pos}</div><div class="l">Freude / Energie</div></div>
+    <div class="stat-tile"><div class="n n-neg">${neg}</div><div class="l">Ärger / Frust</div></div>
+    <div class="stat-tile"><div class="n n-neu">${neu}</div><div class="l">Neutral</div></div>
+  `;
+
+  const cats = {};
+  entries.forEach(e => { if (e.cat) cats[e.cat] = (cats[e.cat]||0) + 1; });
+  const sorted = Object.entries(cats).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const max = sorted[0]?.[1] || 1;
+
+  const barsEl = document.getElementById('cat-bars');
+  if (sorted.length) {
+    barsEl.innerHTML = sorted.map(([k,v]) =>
+      `<div class="cat-bar-row">
+        <div class="cat-bar-label">${k}</div>
+        <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
+        <div class="cat-bar-count">${v}</div>
+      </div>`
+    ).join('');
+  } else {
+    barsEl.innerHTML = '';
+  }
+}
+
+// ── Export ─────────────────────────────────────────────────────────────────
+function exportEntries() {
+  if (entries.length < 1) { toast('Noch keine Einträge vorhanden.'); return; }
+  const lines = entries.map(e => {
+    const d = new Date(e.date).toLocaleDateString('de-CH');
+    const t = { pos: 'Freude/Energie', neg: 'Ärger/Frust', neu: 'Neutral' }[e.tone];
+    return `[${d}] ${t}${e.cat ? ' ('+e.cat+')' : ''}: ${e.text}`;
+  }).join('\n');
+  const text = `Hier sind meine Journaleinträge (${entries.length} Einträge):\n\n${lines}\n\nBitte analysiere diese Einträge: Welche Muster erkennst du? Was zieht mich an, was raubt mir Energie? Was sagen die Einträge über meine beruflichen Bedürfnisse aus? Sei direkt und konkret.`;
+  navigator.clipboard.writeText(text).then(() => {
+    const status = document.getElementById('analyse-status');
+    status.className = 'sync-status ok';
+    status.textContent = '✓ In Zwischenablage kopiert';
+    setTimeout(() => { status.textContent = ''; }, 3000);
+  }).catch(() => toast('Kopieren fehlgeschlagen — bitte manuell kopieren.'));
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+init();
+</script>
+</body>
+</html>
